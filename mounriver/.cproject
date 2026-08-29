@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="com.wch.mounriver.config.release">
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.settings">
+				<autodiscovery enabled="true" problemReportingEnabled="true"/>
+				<cconfiguration id="com.wch.mounriver.config.source">
+					<storageModule moduleId="org.eclipse.cdt.core.settings" name="com.wch.mounriver.config.source">
+						<resource resourceType="PROJECT" workspacePath="/FasterEdge-MCU-CH32V003"/>
+					</storageModule>
+				</cconfiguration>
+			</storageModule>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration"/>
+</cproject>

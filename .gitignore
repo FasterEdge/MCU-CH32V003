@@ -1,0 +1,35 @@
+# ============================================
+# CH32V003 (RISC-V) 嵌入式项目（Arduino / PlatformIO / MounRiver）
+# ============================================
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Arduino
+/build/
+/ArduinoOutput/
+*.ino.user
+*.ino.bak
+
+# MounRiver-Studio
+/Debug/
+/Release/
+*.uvguix.*
+*.wvproj.user
+
+# 编译产物
+*.o
+*.obj
+*.hex
+*.bin
+*.lst
+*.map
+*.axf
+*.elf
+*.d
+
+# 系统
+.DS_Store
+Thumbs.db
