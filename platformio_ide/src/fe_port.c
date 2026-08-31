@@ -1,3 +1,7 @@
+/* FasterEdge 开源项目
+ * GitHub: https://github.com/FasterEdge
+ * Gitee:  https://gitee.com/FasterEdge
+ */
 // fe_port.c — FasterEdge MCU 平台移植层参考实现（CH32V003 / RISC-V RV32EC 版）
 // CH32V003 为 32 位 RISC-V 内核：48MHz、16KB Flash、2KB RAM、无硬件 EEPROM。
 // 本文件为寄存器级参考实现：
