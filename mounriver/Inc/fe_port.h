@@ -1,3 +1,4 @@
+// FasterEdge 开源项目 - Github: https://github.com/FasterEdge - Gitee: https://gitee.com/FasterEdge
 // fe_port.h — FasterEdge MCU 平台移植层（CH32V003 (RISC-V RV32EC) 版）
 // 平台相关能力在此抽象：UART 收发、EEPROM 存储、系统时间、
 // 随机数、GPIO 引脚控制、芯片信息。R3 无网络，不提供 WiFi/TCP。
