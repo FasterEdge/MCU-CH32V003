@@ -62,7 +62,9 @@ fe_output_t ability_modbus_dispatch(void *inst, const char *act, const char *arg
             char out[96];
             u16 n = 0;
             int i;
-            if (addr + count > MODBUS_REGS) return fe_err(act, "addr out of range");
+            // 减法形式防止 addr+count 的 int 溢出回绕绕过边界检查
+            // (FPGA 版同型缺陷: 32 位加法回绕成负数后比较恒假)。
+            if (addr > MODBUS_REGS - count) return fe_err(act, "addr out of range");
             out[n++] = '[';
             for (i = 0; i < count; i++) {
                 if (i) out[n++] = ',';
@@ -76,7 +78,7 @@ fe_output_t ability_modbus_dispatch(void *inst, const char *act, const char *arg
             char out[96];
             u16 n = 0;
             int i;
-            if (addr + count > MODBUS_REGS) return fe_err(act, "addr out of range");
+            if (addr > MODBUS_REGS - count) return fe_err(act, "addr out of range");
             out[n++] = '[';
             for (i = 0; i < count; i++) {
                 if (i) out[n++] = ',';
@@ -90,7 +92,7 @@ fe_output_t ability_modbus_dispatch(void *inst, const char *act, const char *arg
             char out[96];
             u16 n = 0;
             int i;
-            if (addr + count > MODBUS_REGS) return fe_err(act, "addr out of range");
+            if (addr > MODBUS_REGS - count) return fe_err(act, "addr out of range");
             out[n++] = '[';
             for (i = 0; i < count; i++) {
                 if (i) out[n++] = ',';
@@ -103,7 +105,7 @@ fe_output_t ability_modbus_dispatch(void *inst, const char *act, const char *arg
             char out[96];
             u16 n = 0;
             int i;
-            if (addr + count > MODBUS_REGS) return fe_err(act, "addr out of range");
+            if (addr > MODBUS_REGS - count) return fe_err(act, "addr out of range");
             out[n++] = '[';
             for (i = 0; i < count; i++) {
                 if (i) out[n++] = ',';

@@ -4,6 +4,7 @@
 // （RTC 芯片 / 定时器计数）。epoch 用 u32（到 2106 年够用）。
 #include "fe_ability.h"
 #include "fe_port.h"
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -17,9 +18,17 @@ fe_output_t ability_time_dispatch(void *inst, const char *act, const char *args)
         return fe_ok(act, out);
     }
     if (strcmp(act, "sync_manual") == 0) {
-        if (!args || args[0] == 0)
-            return fe_err(act, "missing epoch");
-        u32 ep = (u32)strtoul(args, NULL, 10);
+        if (!args || args[0] == 0 || args[0] == '-')
+            return fe_err(act, "invalid epoch");
+        // strtoul 溢出(如 "9999999999")会回绕成 ULONG_MAX 且看似合法,
+        // 负数字符串("-5")也会回绕成接近 ULONG_MAX 的值被接受;
+        // 必须检查 ERANGE 与结束指针, 拒绝一切非法/越界输入。
+        char *endp = NULL;
+        errno = 0;
+        unsigned long raw = strtoul(args, &endp, 10);
+        if (errno == ERANGE || *endp != 0)
+            return fe_err(act, "invalid epoch");
+        u32 ep = (u32)raw;
         if (ep == 0) return fe_err(act, "invalid epoch");
         fe_port_time_set(ep);
         self->manual_epoch = ep;
@@ -52,7 +61,10 @@ fe_output_t ability_time_dispatch(void *inst, const char *act, const char *args)
         } else {
             self->run_enabled = TRUE;
             self->run_interval = interval;
-            self->next_run = fe_port_time_now() + interval;
+            // u32 加法回绕: now 接近 0xFFFFFFFF 时 now+interval 回绕成 0,
+            // 定时任务将永远不再触发(直到 epoch 再绕一圈)。饱和到最大值。
+            u32 now = fe_port_time_now();
+            self->next_run = (interval > 0xFFFFFFFFUL - now) ? 0xFFFFFFFFUL : now + interval;
         }
         fe_snprintf(out, sizeof(out),
                     "{\"enabled\":%s,\"interval\":%lu,\"nextRun\":%lu}",
