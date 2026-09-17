@@ -158,22 +158,29 @@ u8 fe_port_eeprom_set_u32(u16 addr, u32 value) {
 // 系统时间（SysTick 1ms）
 // ============================================================
 static volatile u32 s_tick_ms = 0;
+static u32 s_epoch_base = 0;
 
 void fe_port_timer0_init(void) {
     // SysTick: 48MHz / 1000 = 48000 周期
     SYST_RVR = 48000u - 1u;
     SYST_CVR = 0;
-    SYST_CSR = (1u << 2) | (1u << 0);          // HCLK | ENABLE
+    // TICKINT(bit1) 必须置位: 旧实现只置 CLKSOURCE|ENABLE 且无 SysTick_Handler,
+    // s_tick_ms 永不自增 → 系统时间恒 0。
+    SYST_CSR = (1u << 2) | (1u << 1) | (1u << 0);   // HCLK | TICKINT | ENABLE
+}
+
+// SysTick 1ms 中断处理
+void SysTick_Handler(void) {
+    s_tick_ms++;
 }
 
 u32 fe_port_time_now(void) {
-    return s_tick_ms / 1000UL;
+    return s_epoch_base + s_tick_ms / 1000UL;
 }
 
 void fe_port_time_set(u32 epoch) {
-    // 基准秒 = epoch - now，内部 s_tick_ms 只计毫秒差值，见注释：
-    // 简化实现：以 SysTick 中断为基准，需在中断中 s_tick_ms++。
-    (void)epoch;
+    // 存 epoch - uptime, 使 now = epoch + 相对秒(避免二次计数)。
+    s_epoch_base = epoch - s_tick_ms / 1000UL;
 }
 
 // ============================================================
